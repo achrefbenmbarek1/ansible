@@ -22,6 +22,9 @@
           - "{{ lookup('env', 'HOME') }}/.config"
           - "{{ lookup('env', 'HOME') }}/.gitconfig"
           - "{{ lookup('env', 'HOME') }}/.ssh"
+          - "{{ lookup('env', 'HOME') }}/.zshrc"
+          - "{{ lookup('env', 'HOME') }}/.zshenv"
+          - "{{ lookup('env', 'HOME') }}/.aliases"
         dest: "/tmp/arch_configs.tar.gz"
     
     - name: Save package list to a file

@@ -45,6 +45,30 @@
         group: "{{ ansible_env.USER }}"
         mode: 'u=rw,g=r,o='
 
+    - name: Copy .zshrc file
+      copy:
+        src: "/tmp/arch_configs/.zshrc"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rw,g=r,o='
+
+    - name: Copy .zshenv file
+      copy:
+        src: "/tmp/arch_configs/.zshenv"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rw,g=r,o='
+
+    - name: Copy .aliases file
+      copy:
+        src: "/tmp/arch_configs/.aliases"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rw,g=r,o='
+
     - name: Install packages with pacman
       become_user: root
       package:
