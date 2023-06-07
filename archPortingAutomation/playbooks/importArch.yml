@@ -1,0 +1,86 @@
+- name: Restore Arch Linux packages and configurations
+  hosts: localhost
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Extract configurations
+      unarchive:
+        src: "/tmp/arch_configs.tar.gz" 
+        dest: "/tmp/arch_configs"
+        creates: "/tmp/arch_configs/etc"
+        extra_opts: ['--no-same-owner']
+        owner: root
+        group: root
+
+    - name: Copy configurations to /etc
+      copy:
+        src: "/tmp/arch_configs/etc/"
+        dest: "/"
+        owner: root
+        group: root
+        mode: 'u=rwX,g=rX,o=rX'
+
+    - name: Copy .config directory
+      copy:
+        src: "/tmp/arch_configs/.config/"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rwX,g=rX,o=rX'
+
+    - name: Copy .ssh directory
+      copy:
+        src: "/tmp/arch_configs/.ssh/"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rwX,g=rwX,o='
+
+    - name: Copy .gitconfig file
+      copy:
+        src: "/tmp/arch_configs/.gitconfig"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rw,g=r,o='
+
+    - name: Install packages with pacman
+      become_user: root
+      package:
+        name: "{{ item }}"
+        state: present
+      with_lines: cat /tmp/package_list.txt | grep -v yay
+
+    - name: Install git and base-devel
+      become_user: root
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - git
+        - base-devel
+
+    - name: Clone yay repository
+      become_user: "{{ ansible_env.USER }}"
+      git:
+        repo: https://aur.archlinux.org/yay.git
+        dest: "{{ ansible_env.HOME }}/yay"
+        version: master
+
+    - name: Change directory to yay
+      become_user: "{{ ansible_env.USER }}"
+      shell: cd "{{ ansible_env.HOME }}/yay"
+
+    - name: Build and install yay
+      become_user: "{{ ansible_env.USER }}"
+      command: makepkg -si --noconfirm
+      args:
+        chdir: "{{ ansible_env.HOME }}/yay"
+
+    - name: Install packages with yay
+      become_user: "{{ ansible_env.USER }}"
+      shell: yay -S --needed --noconfirm "{{ item }}"
+      with_lines: cat /tmp/package_list.txt | grep yay
+
+

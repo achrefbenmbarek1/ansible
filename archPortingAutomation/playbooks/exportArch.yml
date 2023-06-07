@@ -1,0 +1,32 @@
+- name: Export Arch Linux packages and configurations
+  hosts: localhost
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: List installed packages
+      shell: >
+        LANG=C pacman -Qqe | grep -v "$(pacman -Qqm)"
+      register: pacman_packages
+
+    - name: List AUR packages
+      shell: >
+        yay -Qqe
+      register: yay_packages
+      ignore_errors: yes
+
+    - name: Export configurations
+      archive:
+        path:
+          - "/etc"
+          - "{{ lookup('env', 'HOME') }}/.config"
+          - "{{ lookup('env', 'HOME') }}/.gitconfig"
+          - "{{ lookup('env', 'HOME') }}/.ssh"
+        dest: "/tmp/arch_configs.tar.gz"
+    
+    - name: Save package list to a file
+      copy:
+        content: |
+          {{ pacman_packages.stdout }}
+          {{ yay_packages.stdout }}
+        dest: "/tmp/package_list.txt"
