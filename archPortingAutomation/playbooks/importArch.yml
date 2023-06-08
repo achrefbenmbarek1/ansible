@@ -29,6 +29,22 @@
         group: "{{ ansible_env.USER }}"
         mode: 'u=rwX,g=rX,o=rX'
 
+    - name: Copy .tmux directory
+      copy:
+        src: "/tmp/arch_configs/.tmux/"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rwX,g=rX,o=rX'
+
+    - name: Copy .tmux.conf file
+      copy:
+        src: "/tmp/arch_configs/.tmux.conf/"
+        dest: "{{ ansible_env.HOME }}/"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_env.USER }}"
+        mode: 'u=rwX,g=rX,o=rX'
+
     - name: Copy .ssh directory
       copy:
         src: "/tmp/arch_configs/.ssh/"

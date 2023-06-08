@@ -20,6 +20,8 @@
         path:
           - "/etc"
           - "{{ lookup('env', 'HOME') }}/.config"
+          - "{{ lookup('env', 'HOME') }}/.tmux"
+          - "{{ lookup('env', 'HOME') }}/.tmux.conf"
           - "{{ lookup('env', 'HOME') }}/.gitconfig"
           - "{{ lookup('env', 'HOME') }}/.ssh"
           - "{{ lookup('env', 'HOME') }}/.zshrc"
